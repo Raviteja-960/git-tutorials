@@ -1,0 +1,3484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SITER Alumni Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #0e74aa 0%, #076ea3ce 50%, #0569c2 100%
+);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .logo {
+            padding: 0 20px 20px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 20px;
+        }
+
+        .logo h1 {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-links li {
+            padding: 0;
+            margin: 5px 0;
+        }
+
+        .nav-links a {
+            display: flex;
+            align-items: center;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover, .nav-links a.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid white;
+        }
+
+        .nav-links i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            margin-left: 250px;
+            overflow-y: auto;
+        }
+
+        /* Top Navigation */
+        .top-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .date-time {
+            font-size: 16px;
+            color: #3a1c71;
+            font-weight: 500;
+        }
+
+        .search-container {
+            flex-grow: 1;
+            margin: 0 20px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 24px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .top-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .icon-btn {
+            position: relative;
+            background: none;
+            border: none;
+            color: #3a1c71;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        .notification-badge, .message-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e0245e;
+            color: white;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-dropdown, .message-dropdown {
+            display: none;
+            position: absolute;
+            top: 40px;
+            right: 0;
+            width: 300px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            z-index: 1000;
+        }
+
+        .icon-btn:hover .notification-dropdown,
+        .icon-btn:hover .message-dropdown {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Page Header */
+        .page-header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .page-header h2 {
+            color: #3a1c71;
+            margin-bottom: 5px;
+        }
+
+        /* Dashboard Home Content */
+        .dashboard-home {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            color: #3a1c71;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .stat-item i {
+            font-size: 24px;
+            color: #3a1c71;
+            margin-bottom: 10px;
+        }
+
+        .stat-item .number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3a1c71;
+        }
+
+        .stat-item .label {
+            font-size: 14px;
+            color: #777;
+        }
+
+        /* Calendar Styles */
+        .calendar {
+            margin-bottom: 20px;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            background: #3a1c71;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+        }
+
+        .calendar-day {
+            text-align: center;
+            padding: 8px;
+            border-radius: 4px;
+            background: #f8f9fa;
+            font-weight: 500;
+        }
+
+        .calendar-date {
+            text-align: center;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .calendar-date:hover {
+            background: #f0f2f5;
+        }
+
+        .calendar-date.has-event::after {
+            content: '';
+            position: absolute;
+            bottom: 3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 5px;
+            height: 5px;
+            background: #e0245e;
+            border-radius: 50%;
+        }
+
+        .calendar-date.current {
+            background: #3a1c71;
+            color: white;
+        }
+
+        .calendar-date.other-month {
+            color: #ccc;
+        }
+
+        /* Post Styles */
+        .post {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .post-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 12px;
+            border: 2px solid #3a1c71;
+        }
+
+        .user-info {
+            flex-grow: 1;
+        }
+
+        .user-info h3 {
+            font-size: 16px;
+            color: #3a1c71;
+            margin-bottom: 2px;
+        }
+
+        .user-info span {
+            font-size: 12px;
+            color: #777;
+        }
+
+        .post-image {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            max-height: 400px;
+            object-fit: cover;
+        }
+
+        .post-video {
+            width: 100%;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .post-content {
+            margin-bottom: 15px;
+            padding: 10px 0;
+            line-height: 1.5;
+        }
+
+        .hashtag {
+            color: #3a1c71;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .post-actions {
+            display: flex;
+            justify-content: space-between;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+
+        .action-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            color: #555;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .action-btn:hover {
+            background: #f0f2f5;
+            color: #3a1c71;
+        }
+
+        .action-btn.liked {
+            color: #e0245e;
+        }
+
+        .comments-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+            display: none;
+        }
+
+        .comments-section.active {
+            display: block;
+        }
+
+        .comment {
+            display: flex;
+            margin-bottom: 12px;
+        }
+
+        .comment-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        .comment-content {
+            background: #f0f2f5;
+            padding: 10px;
+            border-radius: 8px;
+            flex-grow: 1;
+        }
+
+        .comment-author {
+            font-weight: 500;
+            font-size: 14px;
+            margin-bottom: 4px;
+            color: #3a1c71;
+        }
+
+        .comment-text {
+            font-size: 14px;
+        }
+
+        .add-comment {
+            display: flex;
+            margin-top: 15px;
+            gap: 10px;
+        }
+
+        .add-comment input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .add-comment button {
+            background: #3a1c71;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0 15px;
+            cursor: pointer;
+        }
+
+        .create-post {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e0e0e0;
+        }
+
+        .create-post textarea {
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 12px;
+            resize: none;
+            height: 80px;
+            margin-bottom: 10px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .create-post-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .post-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .post-options span {
+            color: #777;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .post-options span:hover {
+            color: #3a1c71;
+        }
+
+        .post-btn {
+            background: #3a1c71;
+            color: white;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+
+        .post-btn:hover {
+            background: #2d1659;
+        }
+
+        /* File Upload Preview */
+        .file-preview {
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        .file-preview img, .file-preview video {
+            max-width: 100%;
+            border-radius: 8px;
+            max-height: 200px;
+        }
+
+        /* Timeline Page Styles (initially hidden) */
+        .timeline-page, .network-page, .opportunities-page, .events-page, .news-page, .mentorship-page, .profile-page {
+            display: none;
+        }
+
+        .timeline-container {
+            max-width: 2000px;
+            margin: 0 auto;
+            background: rgba(175, 166, 44, 0.13);
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .timeline-header {
+            background: linear-gradient(135deg, #0e74aa 0%, #076ea3ce 50%, #0569c2 100%);
+            color: rgb(18, 17, 29);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .timeline-header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .timeline-header p {
+            opacity: 0.9;
+        }
+
+        .search-bar {
+            padding: 15px 20px;
+            background: #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        /* Network Page Styles */
+        .network-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .connection-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .connection-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 10px;
+            border: 3px solid #3a1c71;
+        }
+
+        .connection-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #3a1c71;
+            font-size: 14px;
+        }
+
+        .connection-title {
+            color: #777;
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
+
+        .connection-actions {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            border-radius: 20px;
+            border: none;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            font-size: 12px;
+        }
+
+        .btn-primary {
+            background: #3a1c71;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2d1659;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #3a1c71;
+            color: #3a1c71;
+        }
+
+        .btn-outline:hover {
+            background: #f0f2f5;
+        }
+
+        .btn-success {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #218838;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        /* Opportunities Page Styles */
+        .opportunity-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .opportunity-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .opportunity-title {
+            font-size: 18px;
+            color: #3a1c71;
+            margin-bottom: 5px;
+        }
+
+        .opportunity-company {
+            color: #777;
+            margin-bottom: 10px;
+        }
+
+        .opportunity-tags {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .tag {
+            background: #f0f2f5;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #555;
+        }
+
+        .opportunity-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* Events Page Styles */
+        .event-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            display: flex;
+            gap: 20px;
+        }
+
+        .event-date {
+            background: #3a1c71;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .event-day {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .event-month {
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+
+        .event-details {
+            flex-grow: 1;
+        }
+
+        .event-title {
+            font-size: 18px;
+            color: #3a1c71;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .event-info {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 10px;
+            color: #777;
+            flex-wrap: wrap;
+        }
+
+        .event-info i {
+            margin-right: 5px;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        /* News Page Styles */
+        .news-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .news-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .news-image {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+        }
+
+        .news-content {
+            padding: 15px;
+        }
+
+        .news-title {
+            font-size: 16px;
+            color: #3a1c71;
+            margin-bottom: 10px;
+            cursor: pointer;
+        }
+
+        .news-excerpt {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .news-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #777;
+            font-size: 12px;
+        }
+
+        /* Mentorship Page Styles */
+        .mentorship-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .mentorship-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .mentorship-icon {
+            font-size: 40px;
+            color: #3a1c71;
+            margin-bottom: 15px;
+        }
+
+        .mentorship-title {
+            font-size: 18px;
+            color: #3a1c71;
+            margin-bottom: 10px;
+        }
+
+        .mentorship-desc {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        /* Profile Page Styles */
+        .profile-header {
+            background: white;
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #3a1c71;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            color: #3a1c71;
+            margin-bottom: 5px;
+        }
+
+        .profile-title {
+            color: #777;
+            margin-bottom: 15px;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+
+        .profile-stat {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #3a1c71;
+        }
+
+        .stat-label {
+            color: #777;
+            font-size: 14px;
+        }
+
+        .profile-actions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .profile-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .profile-about, .profile-experience, .profile-education, .profile-skills {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-about h3, .profile-experience h3, .profile-education h3, .profile-skills h3 {
+            color: #3a1c71;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .experience-item, .education-item {
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .experience-item:last-child, .education-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .experience-title, .education-title {
+            font-weight: 600;
+            color: #3a1c71;
+            margin-bottom: 5px;
+        }
+
+        .experience-company, .education-institution {
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        .experience-date, .education-date {
+            color: #999;
+            font-size: 14px;
+        }
+
+        .skill-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .skill-name {
+            color: #555;
+        }
+
+        .skill-level {
+            color: #777;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            width: 500px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            color: #3a1c71;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #777;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Chat Modal Styles */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: 400px;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+
+        .message.sent {
+            background: #3a1c71;
+            color: white;
+            margin-left: auto;
+        }
+
+        .message.received {
+            background: #f0f2f5;
+            color: #333;
+        }
+
+        .chat-input {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .chat-input button {
+            background: #3a1c71;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 0 15px;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+            background: #f8f9fa;
+            margin-top: 20px;
+            border-radius: 8px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .dashboard-home {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 70px;
+                padding: 10px 0;
+            }
+            
+            .logo h1 {
+                font-size: 16px;
+            }
+            
+            .nav-links a span {
+                display: none;
+            }
+            
+            .nav-links i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+            
+            .top-nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .search-container {
+                margin: 0;
+                width: 100%;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            .network-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .news-grid, .mentorship-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .event-card {
+                flex-direction: column;
+            }
+            
+            .event-date {
+                align-self: flex-start;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .post-actions {
+                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .action-btn {
+                padding: 5px 8px;
+                font-size: 13px;
+            }
+            
+            .connection-actions {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal for confirmation -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmation</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="modalMessage">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="modalCancel">Cancel</button>
+                <button class="btn btn-primary" id="modalConfirm">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for event details -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="eventModalTitle">Event Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="eventModalBody">
+                <!-- Event details will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="eventModalRSVP">RSVP</button>
+                <button class="btn btn-outline" id="eventModalClose">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for news details -->
+    <div id="newsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="newsModalTitle">News Details</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="newsModalBody">
+                <!-- News details will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="newsModalClose">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for messaging -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title" id="messageModalTitle">Message</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Chat messages will be inserted here -->
+                    </div>
+                    <div class="chat-input">
+                        <input type="text" id="messageInput" placeholder="Type your message...">
+                        <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal for profile editing -->
+    <div id="profileModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Profile</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="profileForm">
+                    <div style="margin-bottom: 15px;">
+                        <label for="profileName" style="display: block; margin-bottom: 5px; font-weight: 500;">Name</label>
+                        <input type="text" id="profileName" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label for="profileTitle" style="display: block; margin-bottom: 5px; font-weight: 500;">Title</label>
+                        <input type="text" id="profileTitle" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    <div style="margin-bottom: 15px;">
+                        <label for="profileAbout" style="display: block; margin-bottom: 5px; font-weight: 500;">About</label>
+                        <textarea id="profileAbout" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; height: 100px;"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="profileModalCancel">Cancel</button>
+                <button class="btn btn-primary" id="profileModalSave">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>SITER Alumni</h1>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="active" data-page="dashboard-home"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
+                <li><a href="#" data-page="timeline-page"><i class="fas fa-stream"></i> <span>Timeline</span></a></li>
+                <li><a href="#" data-page="network-page"><i class="fas fa-user-friends"></i> <span>Network</span></a></li>
+                <li><a href="#" data-page="opportunities-page"><i class="fas fa-briefcase"></i> <span>Opportunities</span></a></li>
+                <li><a href="#" data-page="events-page"><i class="fas fa-calendar-alt"></i> <span>Events</span></a></li>
+                <li><a href="#" data-page="news-page"><i class="fas fa-newspaper"></i> <span>News</span></a></li>
+                <li><a href="#" data-page="mentorship-page"><i class="fas fa-hands-helping"></i> <span>Mentorship</span></a></li>
+                <li><a href="#" data-page="profile-page"><i class="fas fa-user"></i> <span>Profile</span></a></li>
+                <li>
+  <a href="#" onclick="window.location.href='index.html';">
+    <i class="fas fa-sign-out-alt"></i> <span>Logout</span>
+  </a>
+</li>
+
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="top-nav">
+                <div class="date-time">
+                    <span id="current-date"></span> | <span id="current-time"></span>
+                </div>
+                <div class="search-container">
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="top-icons">
+                    <div class="icon-btn">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge">3</span>
+                        <div class="notification-dropdown">
+                            <div class="dropdown-item">
+                                <p><strong>Rohit</strong> liked your post</p>
+                                <small>2 minutes ago</small>
+                            </div>
+                            <div class="dropdown-item">
+                                <p><strong>Virat</strong> commented on your post</p>
+                                <small>10 minutes ago</small>
+                            </div>
+                            <div class="dropdown-item">
+                                <p><strong>Sikhar</strong> sent you a connection request</p>
+                                <small>1 hour ago</small>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="icon-btn">
+                        <i class="fas fa-envelope"></i>
+                        <span class="message-badge">5</span>
+                        <div class="message-dropdown">
+                            <div class="dropdown-item">
+                                <p><strong>Jatin</strong>: Are you attending the React workshop?</p>
+                                <small>Just now</small>
+                            </div>
+                            <div class="dropdown-item">
+                                <p><strong>Virat</strong>: Congratulations on the new job!</p>
+                                <small>30 minutes ago</small>
+                            </div>
+                            <div class="dropdown-item">
+                                <p><strong>Career Services</strong>: New job opportunities available</p>
+                                <small>2 hours ago</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="dashboard-home" class="page-content">
+                <div class="page-header">
+                    <h2>Alumni Dashboard</h2>
+                    <p>Welcome back! Here's what's happening with your alumni network.</p>
+                </div>
+
+                <div class="dashboard-home">
+                    <div>
+                        <div class="create-post">
+                            <textarea placeholder="Share an update..." id="postContent"></textarea>
+                            <div class="file-preview" id="filePreview"></div>
+                            <div class="create-post-actions">
+                                <div class="post-options">
+                                    <span onclick="document.getElementById('imageUpload').click()"><i class="far fa-image"></i> Photo</span>
+                                    <span onclick="document.getElementById('videoUpload').click()"><i class="fas fa-video"></i> Video</span>
+                                    <input type="file" id="imageUpload" accept="image/*" style="display: none;" onchange="previewFile('image')">
+                                    <input type="file" id="videoUpload" accept="video/*" style="display: none;" onchange="previewFile('video')">
+                                </div>
+                                <button class="post-btn" onclick="createNewPost()">Post</button>
+                            </div>
+                        </div>
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Rohit</h3>
+                                    <span>Sub/0003 • 11h ago</span>
+                                </div>
+                            </div>
+                            <img class="post-image" src="https://images.unsplash.com/photo-1579389083078-4e7018379f7e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="Post Image">
+                            <div class="post-content">
+                                Just landed a new UI/UX role at TechCorp! 🎉 <span class="hashtag">#excited</span> <span class="hashtag">#newbeginnings</span>
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="comment">
+                                    <img class="comment-avatar" src="https://randomuser.me/api/portraits/men/41.jpg" alt="Commenter Avatar">
+                                    <div class="comment-content">
+                                        <div class="comment-author">Virat</div>
+                                        <div class="comment-text">Congratulations! Well deserved.</div>
+                                    </div>
+                                </div>
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/men/22.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Virat</h3>
+                                    <span>Sub/0003 • 1d ago</span>
+                                </div>
+                            </div>
+                            <video class="post-video" controls>
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-group-of-friends-partying-happily-4640-large.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="post-content">
+                                <strong>We're hosting an advanced React hooks session this Saturday.</strong> Topics include:
+                                - Custom hooks
+                                - Context API patterns
+                                - Performance optimization
+                                Don't forget to join!
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post 3 -->
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/women/44.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Priya</h3>
+                                    <span>Sub/0005 • 2d ago</span>
+                                </div>
+                            </div>
+                            <img class="post-image" src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="Post Image">
+                            <div class="post-content">
+                                Just completed my certification in Cloud Architecture! So excited to apply these skills in my new role. <span class="hashtag">#cloudcomputing</span> <span class="hashtag">#certification</span>
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="comment">
+                                    <img class="comment-avatar" src="https://randomuser.me/api/portraits/men/45.jpg" alt="Commenter Avatar">
+                                    <div class="comment-content">
+                                        <div class="comment-author">Jatin</div>
+                                        <div class="comment-text">Which certification did you complete?</div>
+                                    </div>
+                                </div>
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post 4 -->
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/men/46.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Jatin</h3>
+                                    <span>Sub/0003 • 3d ago</span>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                Just published a new article on machine learning applications in healthcare. Check it out!
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post 5 -->
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/women/65.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Sunita</h3>
+                                    <span>Sub/0007 • 4d ago</span>
+                                </div>
+                            </div>
+                            <img class="post-image" src="https://images.unsplash.com/photo-1551836022-d5d88e9218df?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="Post Image">
+                            <div class="post-content">
+                                Our startup just secured seed funding! Grateful for the support from the SITER alumni network. <span class="hashtag">#startup</span> <span class="hashtag">#funding</span> <span class="hashtag">#entrepreneurship</span>
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="comment">
+                                    <img class="comment-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="Commenter Avatar">
+                                    <div class="comment-content">
+                                        <div class="comment-author">Rohit</div>
+                                        <div class="comment-text">This is amazing news! Congratulations!</div>
+                                    </div>
+                                </div>
+                                <div class="comment">
+                                    <img class="comment-avatar" src="https://randomuser.me/api/portraits/men/22.jpg" alt="Commenter Avatar">
+                                    <div class="comment-content">
+                                        <div class="comment-author">Virat</div>
+                                        <div class="comment-text">Well deserved! Your product is innovative.</div>
+                                    </div>
+                                </div>
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="card">
+                            <h3>Live Calendar</h3>
+                            <div class="calendar">
+                                <div class="calendar-header">
+                                    <h4 id="calendarMonth">September 2023</h4>
+                                    <div class="calendar-nav">
+                                        <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+                                        <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+                                    </div>
+                                </div>
+                                <div class="calendar-grid" id="calendarDays">
+                                    <!-- Calendar days will be generated by JavaScript -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Upcoming Events</h3>
+                            <div class="event-card">
+                                <div class="event-date">
+                                    <div class="event-day">30</div>
+                                    <div class="event-month">Sep</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-title" onclick="showEventDetails('Alumni Meetup 2023', 'Annual alumni gathering with keynote speakers, networking sessions, and campus tours. This year we have special guest speakers from the tech industry and opportunities for current students to connect with alumni.')">Alumni Meetup 2023</div>
+                                    <div class="event-info">
+                                        <span><i class="far fa-clock"></i> 6:00 PM</span>
+                                        <span><i class="fas fa-map-marker-alt"></i> Campus Auditorium</span>
+                                    </div>
+                                    <div class="event-actions">
+                                        <button class="btn btn-primary" onclick="rsvpEvent('Alumni Meetup 2023')">RSVP</button>
+                                        <button class="btn btn-outline" onclick="addToCalendar('Alumni Meetup 2023')">Add to Calendar</button>
+                                        <button class="btn btn-outline" onclick="shareEvent('Alumni Meetup 2023')">Share</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="event-card">
+                                <div class="event-date">
+                                    <div class="event-day">15</div>
+                                    <div class="event-month">Oct</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-title" onclick="showEventDetails('Tech Conference 2023', 'Annual technology conference featuring industry leaders, workshops, and networking opportunities. This year\'s focus is on AI and machine learning applications in various industries.')">Tech Conference 2023</div>
+                                    <div class="event-info">
+                                        <span><i class="far fa-clock"></i> 9:00 AM</span>
+                                        <span><i class="fas fa-map-marker-alt"></i> Convention Center</span>
+                                    </div>
+                                    <div class="event-actions">
+                                        <button class="btn btn-primary" onclick="rsvpEvent('Tech Conference 2023')">RSVP</button>
+                                        <button class="btn btn-outline" onclick="addToCalendar('Tech Conference 2023')">Add to Calendar</button>
+                                        <button class="btn btn-outline" onclick="shareEvent('Tech Conference 2023')">Share</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="event-card">
+                                <div class="event-date">
+                                    <div class="event-day">22</div>
+                                    <div class="event-month">Oct</div>
+                                </div>
+                                <div class="event-details">
+                                    <div class="event-title" onclick="showEventDetails('Career Fair', 'Annual career fair with top companies looking to hire SITER alumni. Bring your resume and portfolio to make connections with potential employers.')">Career Fair</div>
+                                    <div class="event-info">
+                                        <span><i class="far fa-clock"></i> 10:00 AM</span>
+                                        <span><i class="fas fa-map-marker-alt"></i> Campus Gymnasium</span>
+                                    </div>
+                                    <div class="event-actions">
+                                        <button class="btn btn-primary" onclick="rsvpEvent('Career Fair')">RSVP</button>
+                                        <button class="btn btn-outline" onclick="addToCalendar('Career Fair')">Add to Calendar</button>
+                                        <button class="btn btn-outline" onclick="shareEvent('Career Fair')">Share</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="card">
+                            <h3>Suggested Connections</h3>
+                            <div class="connection-card">
+                                <img class="connection-avatar" src="https://randomuser.me/api/portraits/women/65.jpg" alt="User Avatar">
+                                <div class="connection-name">Priya Sharma</div>
+                                <div class="connection-title">Software Engineer at Google</div>
+                                <div class="connection-actions">
+                                    <button class="btn btn-primary connect-btn">Connect</button>
+                                    <button class="btn btn-outline message-btn" onclick="openMessageModal('Priya Sharma', true)">Message</button>
+                                </div>
+                            </div>
+                            <div class="connection-card">
+                                <img class="connection-avatar" src="https://randomuser.me/api/portraits/men/75.jpg" alt="User Avatar">
+                                <div class="connection-name">Amit Patel</div>
+                                <div class="connection-title">Product Manager at Microsoft</div>
+                                <div class="connection-actions">
+                                    <button class="btn btn-primary connect-btn">Connect</button>
+                                    <button class="btn btn-outline message-btn" onclick="openMessageModal('Amit Patel', false)">Message</button>
+                                </div>
+                            </div>
+                            <div class="connection-card">
+                                <img class="connection-avatar" src="https://randomuser.me/api/portraits/women/45.jpg" alt="User Avatar">
+                                <div class="connection-name">Sunita Reddy</div>
+                                <div class="connection-title">Marketing Director at Nike</div>
+                                <div class="connection-actions">
+                                    <button class="btn btn-outline" style="background: #28a745; color: white;">Following</button>
+                                    <button class="btn btn-outline message-btn" onclick="openMessageModal('Sunita Reddy', true)">Message</button>
+                                </div>
+                            </div>
+                            <div class="connection-card">
+                                <img class="connection-avatar" src="https://randomuser.me/api/portraits/men/55.jpg" alt="User Avatar">
+                                <div class="connection-name">Vikram Malhotra</div>
+                                <div class="connection-title">Financial Analyst at JPMorgan</div>
+                                <div class="connection-actions">
+                                    <button class="btn btn-primary connect-btn">Connect</button>
+                                    <button class="btn btn-outline message-btn" onclick="openMessageModal('Vikram Malhotra', false)">Message</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline Page -->
+            <div id="timeline-page" class="timeline-page">
+                <div class="timeline-container">
+                    <div class="timeline-header">
+                        <h1>SITER Alumni Timeline</h1>
+                        <p>Connect with your fellow alumni</p>
+                    </div>
+
+                    <div class="search-bar">
+                        <input type="text" placeholder="Search posts...">
+                    </div>
+
+                    <div class="posts-container">
+                        <div class="create-post">
+                            <textarea placeholder="Share an update..." id="timelinePostContent"></textarea>
+                            <div class="file-preview" id="timelineFilePreview"></div>
+                            <div class="create-post-actions">
+                                <div class="post-options">
+                                    <span onclick="document.getElementById('timelineImageUpload').click()"><i class="far fa-image"></i> Photo</span>
+                                    <span onclick="document.getElementById('timelineVideoUpload').click()"><i class="fas fa-video"></i> Video</span>
+                                    <input type="file" id="timelineImageUpload" accept="image/*" style="display: none;" onchange="previewTimelineFile('image')">
+                                    <input type="file" id="timelineVideoUpload" accept="video/*" style="display: none;" onchange="previewTimelineFile('video')">
+                                </div>
+                                <button class="post-btn" onclick="createNewTimelinePost()">Post</button>
+                            </div>
+                        </div>
+
+                        <!-- Post 1 -->
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/men/32.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Rohit</h3>
+                                    <span>Sub/0003 • 11h ago</span>
+                                </div>
+                            </div>
+                            <img class="post-image" src="https://images.unsplash.com/photo-1579389083078-4e7018379f7e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="Post Image">
+                            <div class="post-content">
+                                Just landed a new UI/UX role at TechCorp! 🎉 <span class="hashtag">#excited</span> <span class="hashtag">#newbeginnings</span>
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="comment">
+                                    <img class="comment-avatar" src="https://randomuser.me/api/portraits/men/41.jpg" alt="Commenter Avatar">
+                                    <div class="comment-content">
+                                        <div class="comment-author">Virat</div>
+                                        <div class="comment-text">Congratulations! Well deserved.</div>
+                                    </div>
+                                </div>
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post 2 -->
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/men/22.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Virat</h3>
+                                    <span>Sub/0003 • 1d ago</span>
+                                </div>
+                            </div>
+                            <video class="post-video" controls>
+                                <source src="https://assets.mixkit.co/videos/preview/mixkit-group-of-friends-partying-happily-4640-large.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <div class="post-content">
+                                <strong>We're hosting an advanced React hooks session this Saturday.</strong> Topics include:
+                                - Custom hooks
+                                - Context API patterns
+                                - Performance optimization
+                                Don't forget to join!
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post 3 -->
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/men/44.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Sikhar</h3>
+                                    <span>Sub/0003 • 13h ago</span>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                Working on the dashboard component. Anyone have suggestions for calendar integration libraries?
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="comment">
+                                    <img class="comment-avatar" src="https://randomuser.me/api/portraits/men/45.jpg" alt="Commenter Avatar">
+                                    <div class="comment-content">
+                                        <div class="comment-author">Jatin</div>
+                                        <div class="comment-text">I've used react-big-calendar before. Pretty flexible!</div>
+                                    </div>
+                                </div>
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post 4 -->
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/men/46.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Jatin</h3>
+                                    <span>Sub/0003 • 2d ago</span>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                Just published a new article on machine learning applications in healthcare. Check it out!
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post 5 -->
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/women/33.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Neha</h3>
+                                    <span>Sub/0008 • 3d ago</span>
+                                </div>
+                            </div>
+                            <img class="post-image" src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="Post Image">
+                            <div class="post-content">
+                                Just launched my first mobile app on the Play Store! It's a fitness tracking application with AI-powered recommendations. <span class="hashtag">#mobileapp</span> <span class="hashtag">#fitness</span> <span class="hashtag">#AI</span>
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="comment">
+                                    <img class="comment-avatar" src="https://randomuser.me/api/portraits/men/22.jpg" alt="Commenter Avatar">
+                                    <div class="comment-content">
+                                        <div class="comment-author">Virat</div>
+                                        <div class="comment-text">That's amazing! Can you share the link?</div>
+                                    </div>
+                                </div>
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Post 6 -->
+                        <div class="post">
+                            <div class="post-header">
+                                <img class="user-avatar" src="https://randomuser.me/api/portraits/men/77.jpg" alt="User Avatar">
+                                <div class="user-info">
+                                    <h3>Raj</h3>
+                                    <span>Sub/0010 • 4d ago</span>
+                                </div>
+                            </div>
+                            <div class="post-content">
+                                Our research paper on renewable energy systems got accepted at the International Energy Conference! Grateful to my team and mentors at SITER. <span class="hashtag">#research</span> <span class="hashtag">#renewableenergy</span> <span class="hashtag">#conference</span>
+                            </div>
+                            <div class="post-actions">
+                                <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                                <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                                <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                            </div>
+                            <div class="comments-section">
+                                <div class="comment">
+                                    <img class="comment-avatar" src="https://randomuser.me/api/portraits/women/65.jpg" alt="Commenter Avatar">
+                                    <div class="comment-content">
+                                        <div class="comment-author">Priya</div>
+                                        <div class="comment-text">Congratulations! This is a significant achievement.</div>
+                                    </div>
+                                </div>
+                                <div class="comment">
+                                    <img class="comment-avatar" src="https://randomuser.me/api/portraits/men/46.jpg" alt="Commenter Avatar">
+                                    <div class="comment-content">
+                                        <div class="comment-author">Jatin</div>
+                                        <div class="comment-text">Well done! Would love to read your paper.</div>
+                                    </div>
+                                </div>
+                                <div class="add-comment">
+                                    <input type="text" placeholder="Write a comment...">
+                                    <button><i class="fas fa-paper-plane"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer>
+                        <p>© 2023 SITER Alumni Network. All rights reserved.</p>
+                    </footer>
+                </div>
+            </div>
+
+            <!-- Network Page -->
+            <div id="network-page" class="network-page">
+                <div class="page-header">
+                    <h2>Your Network</h2>
+                    <p>Connect with fellow alumni and expand your professional network</p>
+                </div>
+
+                <div class="card">
+                    <h3>Connection Requests (4)</h3>
+                    <div class="network-grid">
+                        <div class="connection-card">
+                            <img class="connection-avatar" src="https://randomuser.me/api/portraits/women/33.jpg" alt="User Avatar">
+                            <div class="connection-name">Neha Singh</div>
+                            <div class="connection-title">Data Scientist at Amazon</div>
+                            <div class="connection-actions">
+                                <button class="btn btn-primary" onclick="acceptConnection('Neha Singh')">Accept</button>
+                                <button class="btn btn-danger" onclick="ignoreConnection('Neha Singh')">Ignore</button>
+                            </div>
+                        </div>
+                        <div class="connection-card">
+                            <img class="connection-avatar" src="https://randomuser.me/api/portraits/men/22.jpg" alt="User Avatar">
+                            <div class="connection-name">Rajiv Mehta</div>
+                            <div class="connection-title">UX Designer at Apple</div>
+                            <div class="connection-actions">
+                                <button class="btn btn-primary" onclick="acceptConnection('Rajiv Mehta')">Accept</button>
+                                <button class="btn btn-danger" onclick="ignoreConnection('Rajiv Mehta')">Ignore</button>
+                            </div>
+                        </div>
+                        <div class="connection-card">
+                            <img class="connection-avatar" src="https://randomuser.me/api/portraits/women/55.jpg" alt="User Avatar">
+                            <div class="connection-name">Anjali Kapoor</div>
+                            <div class="connection-title">Product Manager at Meta</div>
+                            <div class="connection-actions">
+                                <button class="btn btn-primary" onclick="acceptConnection('Anjali Kapoor')">Accept</button>
+                                <button class="btn btn-danger" onclick="ignoreConnection('Anjali Kapoor')">Ignore</button>
+                            </div>
+                        </div>
+                        <div class="connection-card">
+                            <img class="connection-avatar" src="https://randomuser.me/api/portraits/men/66.jpg" alt="User Avatar">
+                            <div class="connection-name">Sanjay Verma</div>
+                            <div class="connection-title">Software Engineer at Netflix</div>
+                            <div class="connection-actions">
+                                <button class="btn btn-primary" onclick="acceptConnection('Sanjay Verma')">Accept</button>
+                                <button class="btn btn-danger" onclick="ignoreConnection('Sanjay Verma')">Ignore</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>People You May Know (6)</h3>
+                    <div class="network-grid">
+                        <div class="connection-card">
+                            <img class="connection-avatar" src="https://randomuser.me/api/portraits/women/65.jpg" alt="User Avatar">
+                            <div class="connection-name">Priya Sharma</div>
+                            <div class="connection-title">Software Engineer at Google</div>
+                            <div class="connection-actions">
+                                <button class="btn btn-primary connect-btn" onclick="connectUser('Priya Sharma', this)">Connect</button>
+                                <button class="btn btn-outline message-btn" onclick="openMessageModal('Priya Sharma', false)">Message</button>
+                            </div>
+                        </div>
+                        <div class="connection-card">
+                            <img class="connection-avatar" src="https://randomuser.me/api/portraits/men/75.jpg" alt="User Avatar">
+                            <div class="connection-name">Amit Patel</div>
+                            <div class="connection-title">Product Manager at Microsoft</div>
+                            <div class="connection-actions">
+                                <button class="btn btn-primary connect-btn" onclick="connectUser('Amit Patel', this)">Connect</button>
+                                <button class="btn btn-outline message-btn" onclick="openMessageModal('Amit Patel', false)">Message</button>
+                            </div>
+                        </div>
+                        <div class="connection-card">
+                            <img class="connection-avatar" src="https://randomuser.me/api/portraits/women/45.jpg" alt="User Avatar">
+                            <div class="connection-name">Sunita Reddy</div>
+                            <div class="connection-title">Marketing Director at Nike</div>
+                            <div class="connection-actions">
+                                <button class="btn btn-outline" style="background: #28a745; color: white;">Following</button>
+                                <button class="btn btn-outline message-btn" onclick="openMessageModal('Sunita Reddy', true)">Message</button>
+                            </div>
+                        </div>
+                        <div class="connection-card">
+                            <img class="connection-avatar" src="https://randomuser.me/api/portraits/men/55.jpg" alt="User Avatar">
+                            <div class="connection-name">Vikram Malhotra</div>
+                            <div class="connection-title">Financial Analyst at JPMorgan</div>
+                            <div class="connection-actions">
+                                <button class="btn btn-primary connect-btn" onclick="connectUser('Vikram Malhotra', this)">Connect</button>
+                                <button class="btn btn-outline message-btn" onclick="openMessageModal('Vikram Malhotra', false)">Message</button>
+                            </div>
+                        </div>
+                        <div class="connection-card">
+                            <img class="connection-avatar" src="https://randomuser.me/api/portraits/women/25.jpg" alt="User Avatar">
+                            <div class="connection-name">Kavita Joshi</div>
+                            <div class="connection-title">Data Analyst at Spotify</div>
+                            <div class="connection-actions">
+                                <button class="btn btn-primary connect-btn" onclick="connectUser('Kavita Joshi', this)">Connect</button>
+                                <button class="btn btn-outline message-btn" onclick="openMessageModal('Kavita Joshi', false)">Message</button>
+                            </div>
+                        </div>
+                        <div class="connection-card">
+                            <img class="connection-avatar" src="https://randomuser.me/api/portraits/men/35.jpg" alt="User Avatar">
+                            <div class="connection-name">Rahul Desai</div>
+                            <div class="connection-title">UX Researcher at Adobe</div>
+                            <div class="connection-actions">
+                                <button class="btn btn-primary connect-btn" onclick="connectUser('Rahul Desai', this)">Connect</button>
+                                <button class="btn btn-outline message-btn" onclick="openMessageModal('Rahul Desai', false)">Message</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Other pages would follow similar structure -->
+            <!-- Opportunities Page -->
+            <div id="opportunities-page" class="opportunities-page">
+                <div class="page-header">
+                    <h2>Career Opportunities</h2>
+                    <p>Find your next career move from these curated opportunities</p>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="opportunity-header">
+                        <div>
+                            <div class="opportunity-title">Senior Frontend Developer</div>
+                            <div class="opportunity-company">TechCorp International</div>
+                        </div>
+                        <button class="btn btn-outline save-btn" onclick="saveOpportunity('Senior Frontend Developer', this)"><i class="far fa-bookmark"></i> Save</button>
+                    </div>
+                    <div class="opportunity-tags">
+                        <span class="tag">React</span>
+                        <span class="tag">TypeScript</span>
+                        <span class="tag">Remote</span>
+                        <span class="tag">$90k - $120k</span>
+                    </div>
+                    <p>We're looking for an experienced frontend developer to join our growing team. You'll work on cutting-edge projects with a talented group of engineers.</p>
+                    <div class="opportunity-actions">
+                        <button class="btn btn-primary apply-btn" onclick="applyOpportunity('Senior Frontend Developer', this)">Apply Now</button>
+                        <button class="btn btn-outline" onclick="viewOpportunityDetails('Senior Frontend Developer')">View Details</button>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="opportunity-header">
+                        <div>
+                            <div class="opportunity-title">Data Science Intern</div>
+                            <div class="opportunity-company">Data Insights Ltd.</div>
+                        </div>
+                        <button class="btn btn-outline save-btn" onclick="saveOpportunity('Data Science Intern', this)"><i class="far fa-bookmark"></i> Save</button>
+                    </div>
+                    <div class="opportunity-tags">
+                        <span class="tag">Python</span>
+                        <span class="tag">Machine Learning</span>
+                        <span class="tag">Internship</span>
+                        <span class="tag">$25/hr</span>
+                    </div>
+                    <p>Summer internship for students interested in data science. Work on real-world projects and learn from industry experts.</p>
+                    <div class="opportunity-actions">
+                        <button class="btn btn-primary apply-btn" onclick="applyOpportunity('Data Science Intern', this)">Apply Now</button>
+                        <button class="btn btn-outline" onclick="viewOpportunityDetails('Data Science Intern')">View Details</button>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="opportunity-header">
+                        <div>
+                            <div class="opportunity-title">Product Manager</div>
+                            <div class="opportunity-company">InnovateTech Solutions</div>
+                        </div>
+                        <button class="btn btn-outline save-btn" onclick="saveOpportunity('Product Manager', this)"><i class="far fa-bookmark"></i> Save</button>
+                    </div>
+                    <div class="opportunity-tags">
+                        <span class="tag">Product Management</span>
+                        <span class="tag">Agile</span>
+                        <span class="tag">On-site</span>
+                        <span class="tag">$110k - $140k</span>
+                    </div>
+                    <p>We're seeking a skilled Product Manager to lead our product development initiatives and drive innovation in our software solutions.</p>
+                    <div class="opportunity-actions">
+                        <button class="btn btn-primary apply-btn" onclick="applyOpportunity('Product Manager', this)">Apply Now</button>
+                        <button class="btn btn-outline" onclick="viewOpportunityDetails('Product Manager')">View Details</button>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="opportunity-header">
+                        <div>
+                            <div class="opportunity-title">DevOps Engineer</div>
+                            <div class="opportunity-company">CloudSystems Inc.</div>
+                        </div>
+                        <button class="btn btn-outline save-btn" onclick="saveOpportunity('DevOps Engineer', this)"><i class="far fa-bookmark"></i> Save</button>
+                    </div>
+                    <div class="opportunity-tags">
+                        <span class="tag">AWS</span>
+                        <span class="tag">Docker</span>
+                        <span class="tag">Kubernetes</span>
+                        <span class="tag">$100k - $130k</span>
+                    </div>
+                    <p>Join our DevOps team to build and maintain our cloud infrastructure and CI/CD pipelines for high-availability applications.</p>
+                    <div class="opportunity-actions">
+                        <button class="btn btn-primary apply-btn" onclick="applyOpportunity('DevOps Engineer', this)">Apply Now</button>
+                        <button class="btn btn-outline" onclick="viewOpportunityDetails('DevOps Engineer')">View Details</button>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="opportunity-header">
+                        <div>
+                            <div class="opportunity-title">UX/UI Designer</div>
+                            <div class="opportunity-company">CreativeMinds Agency</div>
+                        </div>
+                        <button class="btn btn-outline save-btn" onclick="saveOpportunity('UX/UI Designer', this)"><i class="far fa-bookmark"></i> Save</button>
+                    </div>
+                    <div class="opportunity-tags">
+                        <span class="tag">Figma</span>
+                        <span class="tag">Sketch</span>
+                        <span class="tag">Remote</span>
+                        <span class="tag">$80k - $100k</span>
+                    </div>
+                    <p>We're looking for a talented UX/UI Designer to create beautiful and functional interfaces for our digital products.</p>
+                    <div class="opportunity-actions">
+                        <button class="btn btn-primary apply-btn" onclick="applyOpportunity('UX/UI Designer', this)">Apply Now</button>
+                        <button class="btn btn-outline" onclick="viewOpportunityDetails('UX/UI Designer')">View Details</button>
+                    </div>
+                </div>
+
+                <div class="opportunity-card">
+                    <div class="opportunity-header">
+                        <div>
+                            <div class="opportunity-title">Backend Developer</div>
+                            <div class="opportunity-company">ServerStack Technologies</div>
+                        </div>
+                        <button class="btn btn-outline save-btn" onclick="saveOpportunity('Backend Developer', this)"><i class="far fa-bookmark"></i> Save</button>
+                    </div>
+                    <div class="opportunity-tags">
+                        <span class="tag">Node.js</span>
+                        <span class="tag">Python</span>
+                        <span class="tag">MongoDB</span>
+                        <span class="tag">$95k - $120k</span>
+                    </div>
+                    <p>Join our backend team to develop scalable APIs and services for our growing platform with millions of users.</p>
+                    <div class="opportunity-actions">
+                        <button class="btn btn-primary apply-btn" onclick="applyOpportunity('Backend Developer', this)">Apply Now</button>
+                        <button class="btn btn-outline" onclick="viewOpportunityDetails('Backend Developer')">View Details</button>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Saved Opportunities</h3>
+                    <div id="savedOpportunities">
+                        <p>You haven't saved any opportunities yet.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Events Page -->
+            <div id="events-page" class="events-page">
+                <div class="page-header">
+                    <h2>Upcoming Events</h2>
+                    <p>Join these events to network and learn from industry experts</p>
+                </div>
+
+                <div class="event-card">
+                    <div class="event-date">
+                        <div class="event-day">30</div>
+                        <div class="event-month">Sep</div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-title" onclick="showEventDetails('Alumni Meetup 2023', 'Annual alumni gathering with keynote speakers, networking sessions, and campus tours. This year we have special guest speakers from the tech industry and opportunities for current students to connect with alumni.')">Alumni Meetup 2023</div>
+                        <div class="event-info">
+                            <span><i class="far fa-clock"></i> 6:00 PM - 9:00 PM</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Campus Auditorium</span>
+                        </div>
+                        <p>Annual alumni gathering with keynote speakers, networking sessions, and campus tours.</p>
+                        <div class="event-actions">
+                            <button class="btn btn-primary" onclick="rsvpEvent('Alumni Meetup 2023')">RSVP</button>
+                            <button class="btn btn-outline" onclick="addToCalendar('Alumni Meetup 2023')">Add to Calendar</button>
+                            <button class="btn btn-outline" onclick="shareEvent('Alumni Meetup 2023')">Share</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-card">
+                    <div class="event-date">
+                        <div class="event-day">15</div>
+                        <div class="event-month">Oct</div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-title" onclick="showEventDetails('Tech Conference 2023', 'Annual technology conference featuring industry leaders, workshops, and networking opportunities. This year\'s focus is on AI and machine learning applications in various industries.')">Tech Conference 2023</div>
+                        <div class="event-info">
+                            <span><i class="far fa-clock"></i> 9:00 AM - 5:00 PM</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Convention Center</span>
+                        </div>
+                        <p>Annual technology conference featuring industry leaders, workshops, and networking opportunities.</p>
+                        <div class="event-actions">
+                            <button class="btn btn-primary" onclick="rsvpEvent('Tech Conference 2023')">RSVP</button>
+                            <button class="btn btn-outline" onclick="addToCalendar('Tech Conference 2023')">Add to Calendar</button>
+                            <button class="btn btn-outline" onclick="shareEvent('Tech Conference 2023')">Share</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-card">
+                    <div class="event-date">
+                        <div class="event-day">22</div>
+                        <div class="event-month">Oct</div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-title" onclick="showEventDetails('Career Fair', 'Annual career fair with top companies looking to hire SITER alumni. Bring your resume and portfolio to make connections with potential employers.')">Career Fair</div>
+                        <div class="event-info">
+                            <span><i class="far fa-clock"></i> 10:00 AM - 4:00 PM</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Campus Gymnasium</span>
+                        </div>
+                        <p>Annual career fair with top companies looking to hire SITER alumni.</p>
+                        <div class="event-actions">
+                            <button class="btn btn-primary" onclick="rsvpEvent('Career Fair')">RSVP</button>
+                            <button class="btn btn-outline" onclick="addToCalendar('Career Fair')">Add to Calendar</button>
+                            <button class="btn btn-outline" onclick="shareEvent('Career Fair')">Share</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-card">
+                    <div class="event-date">
+                        <div class="event-day">05</div>
+                        <div class="event-month">Nov</div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-title" onclick="showEventDetails('Web Development Workshop', 'Hands-on workshop on modern web development techniques including React, Node.js, and deployment strategies.')">Web Development Workshop</div>
+                        <div class="event-info">
+                            <span><i class="far fa-clock"></i> 1:00 PM - 5:00 PM</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Tech Building Room 302</span>
+                        </div>
+                        <p>Hands-on workshop on modern web development techniques.</p>
+                        <div class="event-actions">
+                            <button class="btn btn-primary" onclick="rsvpEvent('Web Development Workshop')">RSVP</button>
+                            <button class="btn btn-outline" onclick="addToCalendar('Web Development Workshop')">Add to Calendar</button>
+                            <button class="btn btn-outline" onclick="shareEvent('Web Development Workshop')">Share</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-card">
+                    <div class="event-date">
+                        <div class="event-day">18</div>
+                        <div class="event-month">Nov</div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-title" onclick="showEventDetails('AI & Machine Learning Summit', 'Summit focusing on the latest developments in artificial intelligence and machine learning with expert panels and technical sessions.')">AI & Machine Learning Summit</div>
+                        <div class="event-info">
+                            <span><i class="far fa-clock"></i> 9:00 AM - 6:00 PM</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Innovation Center</span>
+                        </div>
+                        <p>Summit focusing on the latest developments in artificial intelligence and machine learning.</p>
+                        <div class="event-actions">
+                            <button class="btn btn-primary" onclick="rsvpEvent('AI & Machine Learning Summit')">RSVP</button>
+                            <button class="btn btn-outline" onclick="addToCalendar('AI & Machine Learning Summit')">Add to Calendar</button>
+                            <button class="btn btn-outline" onclick="shareEvent('AI & Machine Learning Summit')">Share</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="event-card">
+                    <div class="event-date">
+                        <div class="event-day">02</div>
+                        <div class="event-month">Dec</div>
+                    </div>
+                    <div class="event-details">
+                        <div class="event-title" onclick="showEventDetails('Holiday Networking Social', 'Casual holiday gathering for alumni to connect in a relaxed setting with food, drinks, and festive activities.')">Holiday Networking Social</div>
+                        <div class="event-info">
+                            <span><i class="far fa-clock"></i> 7:00 PM - 10:00 PM</span>
+                            <span><i class="fas fa-map-marker-alt"></i> Downtown Event Space</span>
+                        </div>
+                        <p>Casual holiday gathering for alumni to connect in a relaxed setting.</p>
+                        <div class="event-actions">
+                            <button class="btn btn-primary" onclick="rsvpEvent('Holiday Networking Social')">RSVP</button>
+                            <button class="btn btn-outline" onclick="addToCalendar('Holiday Networking Social')">Add to Calendar</button>
+                            <button class="btn btn-outline" onclick="shareEvent('Holiday Networking Social')">Share</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- News Page -->
+            <div id="news-page" class="news-page">
+                <div class="page-header">
+                    <h2>Latest News</h2>
+                    <p>Stay updated with the latest news from SITER Academy and the industry</p>
+                </div>
+
+                <div class="news-grid">
+                    <div class="news-card">
+                        <img class="news-image" src="https://images.unsplash.com/photo-1584697964358-3e14ca57658b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="News Image">
+                        <div class="news-content">
+                            <div class="news-title" onclick="showNewsDetails('SITER Academy Announces New AI Research Center', 'SITER Academy has secured $5M in funding to establish a new AI research center focused on ethical artificial intelligence. The center will bring together researchers from computer science, ethics, and social sciences to develop AI technologies that are fair, transparent, and beneficial to society. The initiative is led by Dr. Emily Johnson, a renowned AI ethics researcher.')">SITER Academy Announces New AI Research Center</div>
+                            <div class="news-excerpt">SITER Academy has secured $5M in funding to establish a new AI research center focused on ethical artificial intelligence...</div>
+                            <div class="news-footer">
+                                <span>2 hours ago</span>
+                                <button class="btn btn-outline" onclick="showNewsDetails('SITER Academy Announces New AI Research Center', 'SITER Academy has secured $5M in funding to establish a new AI research center focused on ethical artificial intelligence. The center will bring together researchers from computer science, ethics, and social sciences to develop AI technologies that are fair, transparent, and beneficial to society. The initiative is led by Dr. Emily Johnson, a renowned AI ethics researcher.')">Read More</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="news-card">
+                        <img class="news-image" src="https://images.unsplash.com/photo-1553877522-43269d4ea984?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="News Image">
+                        <div class="news-content">
+                            <div class="news-title" onclick="showNewsDetails('SITER Alumni Create Startup Valued at $10M', 'A team of SITER graduates has secured Series A funding for their edtech startup that\'s revolutionizing online learning. The platform uses adaptive learning algorithms to personalize education for each student. The founding team includes Priya Sharma (CS \'18), Amit Patel (CS \'17), and Vikram Malhotra (Business \'19).')">SITER Alumni Create Startup Valued at $10M</div>
+                            <div class="news-excerpt">A team of SITER graduates has secured Series A funding for their edtech startup that's revolutionizing online learning...</div>
+                            <div class="news-footer">
+                                <span>1 day ago</span>
+                                <button class="btn btn-outline" onclick="showNewsDetails('SITER Alumni Create Startup Valued at $10M', 'A team of SITER graduates has secured Series A funding for their edtech startup that\'s revolutionizing online learning. The platform uses adaptive learning algorithms to personalize education for each student. The founding team includes Priya Sharma (CS \'18), Amit Patel (CS \'17), and Vikram Malhotra (Business \'19).')">Read More</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="news-card">
+                        <img class="news-image" src="https://images.unsplash.com/photo-1499750310107-5fef28a66643?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="News Image">
+                        <div class="news-content">
+                            <div class="news-title" onclick="showNewsDetails('SITER Ranked Among Top Tech Schools Globally', 'SITER Academy has been ranked among the top 10 technology schools globally by the International Education Review. The ranking is based on academic reputation, employer reputation, research impact, and international diversity. This is the first time SITER has broken into the top 10.')">SITER Ranked Among Top Tech Schools Globally</div>
+                            <div class="news-excerpt">SITER Academy has been ranked among the top 10 technology schools globally by the International Education Review...</div>
+                            <div class="news-footer">
+                                <span>3 days ago</span>
+                                <button class="btn btn-outline" onclick="showNewsDetails('SITER Ranked Among Top Tech Schools Globally', 'SITER Academy has been ranked among the top 10 technology schools globally by the International Education Review. The ranking is based on academic reputation, employer reputation, research impact, and international diversity. This is the first time SITER has broken into the top 10.')">Read More</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="news-card">
+                        <img class="news-image" src="https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="News Image">
+                        <div class="news-content">
+                            <div class="news-title" onclick="showNewsDetails('New Scholarship Program for Women in Tech', 'SITER Academy has launched a new scholarship program aimed at increasing gender diversity in technology fields. The program will provide full tuition support for 20 female students each year. Applications for the next academic year are now open.')">New Scholarship Program for Women in Tech</div>
+                            <div class="news-excerpt">SITER Academy has launched a new scholarship program aimed at increasing gender diversity in technology fields...</div>
+                            <div class="news-footer">
+                                <span>5 days ago</span>
+                                <button class="btn btn-outline" onclick="showNewsDetails('New Scholarship Program for Women in Tech', 'SITER Academy has launched a new scholarship program aimed at increasing gender diversity in technology fields. The program will provide full tuition support for 20 female students each year. Applications for the next academic year are now open.')">Read More</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="news-card">
+                        <img class="news-image" src="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="News Image">
+                        <div class="news-content">
+                            <div class="news-title" onclick="showNewsDetails('SITER Partners with Industry Leaders for Internship Program', 'SITER Academy has announced partnerships with 15 leading tech companies to create an expanded internship program. The program will provide students with real-world experience and mentorship opportunities. Participating companies include Google, Microsoft, Amazon, and Tesla.')">SITER Partners with Industry Leaders for Internship Program</div>
+                            <div class="news-excerpt">SITER Academy has announced partnerships with 15 leading tech companies to create an expanded internship program...</div>
+                            <div class="news-footer">
+                                <span>1 week ago</span>
+                                <button class="btn btn-outline" onclick="showNewsDetails('SITER Partners with Industry Leaders for Internship Program', 'SITER Academy has announced partnerships with 15 leading tech companies to create an expanded internship program. The program will provide students with real-world experience and mentorship opportunities. Participating companies include Google, Microsoft, Amazon, and Tesla.')">Read More</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="news-card">
+                        <img class="news-image" src="https://images.unsplash.com/photo-1542744173-8e7e53415bb0?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=900&q=80" alt="News Image">
+                        <div class="news-content">
+                            <div class="news-title" onclick="showNewsDetails('SITER Research Team Develops Breakthrough in Quantum Computing', 'A research team at SITER Academy has made a significant breakthrough in quantum computing stability. The new approach could make quantum computers more practical for commercial use. The research has been published in the prestigious journal Nature.')">SITER Research Team Develops Breakthrough in Quantum Computing</div>
+                            <div class="news-excerpt">A research team at SITER Academy has made a significant breakthrough in quantum computing stability...</div>
+                            <div class="news-footer">
+                                <span>2 weeks ago</span>
+                                <button class="btn btn-outline" onclick="showNewsDetails('SITER Research Team Develops Breakthrough in Quantum Computing', 'A research team at SITER Academy has made a significant breakthrough in quantum computing stability. The new approach could make quantum computers more practical for commercial use. The research has been published in the prestigious journal Nature.')">Read More</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mentorship Page -->
+            <div id="mentorship-page" class="mentorship-page">
+                <div class="page-header">
+                    <h2>Mentorship Programs</h2>
+                    <p>Grow your skills and career with guidance from experienced mentors</p>
+                </div>
+
+                <div class="mentorship-grid">
+                    <div class="mentorship-card">
+                        <div class="mentorship-icon"><i class="fas fa-chart-line"></i></div>
+                        <div class="mentorship-title">Career Development</div>
+                        <div class="mentorship-desc">Get guidance on career planning, job search strategies, and professional growth from industry experts.</div>
+                        <button class="btn btn-primary enroll-btn" onclick="enrollMentorship('Career Development', this)">Enroll Now</button>
+                    </div>
+
+                    <div class="mentorship-card">
+                        <div class="mentorship-icon"><i class="fas fa-lightbulb"></i></div>
+                        <div class="mentorship-title">Entrepreneurship</div>
+                        <div class="mentorship-desc">Learn how to start and grow your business from successful entrepreneurs and investors.</div>
+                        <button class="btn btn-primary enroll-btn" onclick="enrollMentorship('Entrepreneurship', this)">Enroll Now</button>
+                    </div>
+
+                    <div class="mentorship-card">
+                        <div class="mentorship-icon"><i class="fas fa-heart"></i></div>
+                        <div class="mentorship-title">Personal Growth</div>
+                        <div class="mentorship-desc">Develop soft skills, emotional intelligence, and work-life balance strategies.</div>
+                        <button class="btn btn-primary enroll-btn" onclick="enrollMentorship('Personal Growth', this)">Enroll Now</button>
+                    </div>
+
+                    <div class="mentorship-card">
+                        <div class="mentorship-icon"><i class="fas fa-code"></i></div>
+                        <div class="mentorship-title">Technical Skills</div>
+                        <div class="mentorship-desc">Improve your coding skills and learn new technologies with guidance from senior developers.</div>
+                        <button class="btn btn-primary enroll-btn" onclick="enrollMentorship('Technical Skills', this)">Enroll Now</button>
+                    </div>
+
+                    <div class="mentorship-card">
+                        <div class="mentorship-icon"><i class="fas fa-bullhorn"></i></div>
+                        <div class="mentorship-title">Leadership</div>
+                        <div class="mentorship-desc">Develop leadership skills and learn how to manage teams effectively from experienced leaders.</div>
+                        <button class="btn btn-primary enroll-btn" onclick="enrollMentorship('Leadership', this)">Enroll Now</button>
+                    </div>
+
+                    <div class="mentorship-card">
+                        <div class="mentorship-icon"><i class="fas fa-globe"></i></div>
+                        <div class="mentorship-title">Global Business</div>
+                        <div class="mentorship-desc">Learn about international business practices and how to navigate global markets.</div>
+                        <button class="btn btn-primary enroll-btn" onclick="enrollMentorship('Global Business', this)">Enroll Now</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="profile-page">
+                <div class="profile-header">
+                    <img class="profile-avatar" src="https://randomuser.me/api/portraits/men/1.jpg" alt="Profile Avatar" onclick="changeProfilePicture()">
+                    <div class="profile-name">Alex Johnson</div>
+                    <div class="profile-title">Software Engineer at TechCorp | SITER Alumni</div>
+                    <div class="profile-stats">
+                        <div class="profile-stat">
+                            <div class="stat-value">253</div>
+                            <div class="stat-label">Connections</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="stat-value">47</div>
+                            <div class="stat-label">Posts</div>
+                        </div>
+                        <div class="profile-stat">
+                            <div class="stat-value">12</div>
+                            <div class="stat-label">Events</div>
+                        </div>
+                    </div>
+                    <div class="profile-actions">
+                        <button class="btn btn-primary" onclick="editProfile()">Edit Profile</button>
+                        <button class="btn btn-outline" onclick="changeProfilePicture()">Change Photo</button>
+                    </div>
+                </div>
+
+                <div class="profile-content">
+                    <div>
+                        <div class="profile-about">
+                            <h3>About</h3>
+                            <p>Software engineer with 5+ years of experience in building scalable web applications. Passionate about React, Node.js, and cloud technologies. SITER Academy graduate from the 2018 batch.</p>
+                        </div>
+
+                        <div class="profile-experience">
+                            <h3>Experience</h3>
+                            <div class="experience-item">
+                                <div class="experience-title">Senior Frontend Developer</div>
+                                <div class="experience-company">TechCorp International</div>
+                                <div class="experience-date">Jan 2021 - Present</div>
+                                <p>Leading frontend development for the company's flagship product.</p>
+                            </div>
+                            <div class="experience-item">
+                                <div class="experience-title">Software Engineer</div>
+                                <div class="experience-company">WebSolutions Inc.</div>
+                                <div class="experience-date">Jun 2018 - Dec 2020</div>
+                                <p>Full-stack development using React, Node.js, and MongoDB.</p>
+                            </div>
+                            <div class="experience-item">
+                                <div class="experience-title">Web Developer Intern</div>
+                                <div class="experience-company">Digital Creations</div>
+                                <div class="experience-date">Jan 2018 - May 2018</div>
+                                <p>Developed and maintained client websites using HTML, CSS, and JavaScript.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <div class="profile-education">
+                            <h3>Education</h3>
+                            <div class="education-item">
+                                <div class="education-title">B.Sc. in Computer Science</div>
+                                <div class="education-institution">SITER Academy, Norway</div>
+                                <div class="education-date">2014 - 2018</div>
+                                <p>Graduated with honors. Specialized in web technologies and software engineering.</p>
+                            </div>
+                            <div class="education-item">
+                                <div class="education-title">Full Stack Web Development Bootcamp</div>
+                                <div class="education-institution">CodeMaster Institute</div>
+                                <div class="education-date">Summer 2017</div>
+                                <p>Intensive 12-week program covering frontend and backend development.</p>
+                            </div>
+                        </div>
+
+                        <div class="profile-skills">
+                            <h3>Skills</h3>
+                            <div class="skill-item">
+                                <span class="skill-name">React.js</span>
+                                <span class="skill-level">Expert</span>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">Node.js</span>
+                                <span class="skill-level">Advanced</span>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">JavaScript</span>
+                                <span class="skill-level">Expert</span>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">HTML/CSS</span>
+                                <span class="skill-level">Expert</span>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">AWS</span>
+                                <span class="skill-level">Intermediate</span>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">MongoDB</span>
+                                <span class="skill-level">Advanced</span>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">Git</span>
+                                <span class="skill-level">Expert</span>
+                            </div>
+                            <div class="skill-item">
+                                <span class="skill-name">UI/UX Design</span>
+                                <span class="skill-level">Intermediate</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentMonth = new Date().getMonth();
+        let currentYear = new Date().getFullYear();
+        let savedOpportunities = [];
+        let enrolledMentorships = [];
+        let connections = ['Sunita Reddy'];
+        let currentChatUser = null;
+        let isConnectedToChatUser = false;
+        let chatMessages = {
+            'Priya Sharma': [
+                { sender: 'Priya Sharma', text: 'Hi there! I saw we both attended SITER Academy.', time: '10:30 AM' },
+                { sender: 'You', text: 'Yes, I noticed that too! What did you study?', time: '10:32 AM' },
+                { sender: 'Priya Sharma', text: 'Computer Science, graduated in 2018. You?', time: '10:33 AM' }
+            ],
+            'Amit Patel': [
+                { sender: 'Amit Patel', text: 'Hello! I came across your profile and we have similar interests in product management.', time: 'Yesterday' }
+            ],
+            'Sunita Reddy': [
+                { sender: 'Sunita Reddy', text: 'Thanks for connecting! How\'s everything going?', time: '2 days ago' },
+                { sender: 'You', text: 'Going well! Just busy with work at TechCorp. How about you?', time: '2 days ago' },
+                { sender: 'Sunita Reddy', text: 'Same here! Lots of exciting projects at Nike.', time: '2 days ago' }
+            ],
+            'Vikram Malhotra': [],
+            'Kavita Joshi': [],
+            'Rahul Desai': []
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Update date and time
+            function updateDateTime() {
+                const now = new Date();
+                const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+                const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                
+                document.getElementById('current-date').textContent = now.toLocaleDateString('en-US', dateOptions);
+                document.getElementById('current-time').textContent = now.toLocaleTimeString('en-US', timeOptions);
+            }
+            
+            updateDateTime();
+            setInterval(updateDateTime, 1000);
+            
+            // Initialize calendar
+            generateCalendar(currentMonth, currentYear);
+            
+            // Navigation functionality
+            const navLinks = document.querySelectorAll('.nav-links a');
+            const pages = document.querySelectorAll('.page-content, .timeline-page, .network-page, .opportunities-page, .events-page, .news-page, .mentorship-page, .profile-page');
+            
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Hide all pages
+                    pages.forEach(page => page.style.display = 'none');
+                    
+                    // Show the selected page
+                    const pageId = this.getAttribute('data-page');
+                    if (pageId) {
+                        document.getElementById(pageId).style.display = 'block';
+                    }
+                });
+            });
+            
+            // Show dashboard by default
+            document.getElementById('dashboard-home').style.display = 'block';
+
+            // Modal functionality
+            const modal = document.getElementById('confirmationModal');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalClose = document.querySelector('.modal-close');
+            const modalCancel = document.getElementById('modalCancel');
+            const modalConfirm = document.getElementById('modalConfirm');
+            let currentAction = null;
+            
+            function openModal(message, action) {
+                modalMessage.textContent = message;
+                currentAction = action;
+                modal.style.display = 'flex';
+            }
+            
+            function closeModal() {
+                modal.style.display = 'none';
+                currentAction = null;
+            }
+            
+            modalClose.addEventListener('click', closeModal);
+            modalCancel.addEventListener('click', closeModal);
+            
+            modalConfirm.addEventListener('click', function() {
+                if (currentAction) {
+                    currentAction();
+                }
+                closeModal();
+            });
+            
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    closeModal();
+                }
+            });
+
+            // Event modal functionality
+            const eventModal = document.getElementById('eventModal');
+            const eventModalClose = document.getElementById('eventModalClose');
+            
+            eventModalClose.addEventListener('click', function() {
+                eventModal.style.display = 'none';
+            });
+            
+            // News modal functionality
+            const newsModal = document.getElementById('newsModal');
+            const newsModalClose = document.getElementById('newsModalClose');
+            
+            newsModalClose.addEventListener('click', function() {
+                newsModal.style.display = 'none';
+            });
+            
+            // Message modal functionality
+            const messageModal = document.getElementById('messageModal');
+            const messageModalClose = messageModal.querySelector('.modal-close');
+            const sendMessageBtn = document.getElementById('sendMessage');
+            const messageInput = document.getElementById('messageInput');
+            
+            messageModalClose.addEventListener('click', function() {
+                messageModal.style.display = 'none';
+            });
+            
+            sendMessageBtn.addEventListener('click', function() {
+                sendMessage();
+            });
+            
+            messageInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendMessage();
+                }
+            });
+            
+            // Profile modal functionality
+            const profileModal = document.getElementById('profileModal');
+            const profileModalCancel = document.getElementById('profileModalCancel');
+            const profileModalSave = document.getElementById('profileModalSave');
+            
+            profileModalCancel.addEventListener('click', function() {
+                profileModal.style.display = 'none';
+            });
+            
+            profileModalSave.addEventListener('click', function() {
+                const name = document.getElementById('profileName').value;
+                const title = document.getElementById('profileTitle').value;
+                const about = document.getElementById('profileAbout').value;
+                
+                if (name) {
+                    document.querySelector('.profile-name').textContent = name;
+                }
+                
+                if (title) {
+                    document.querySelector('.profile-title').textContent = title;
+                }
+                
+                if (about) {
+                    document.querySelector('.profile-about p').textContent = about;
+                }
+                
+                profileModal.style.display = 'none';
+                alert('Profile updated successfully!');
+            });
+            
+            // Calendar navigation
+            document.getElementById('prevMonth').addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                generateCalendar(currentMonth, currentYear);
+            });
+            
+            document.getElementById('nextMonth').addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                generateCalendar(currentMonth, currentYear);
+            });
+
+            // Like functionality
+            const likeButtons = document.querySelectorAll('.like-btn');
+            likeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.classList.toggle('liked');
+                    if (this.classList.contains('liked')) {
+                        this.innerHTML = '<i class="fas fa-thumbs-up"></i> Liked';
+                    } else {
+                        this.innerHTML = '<i class="far fa-thumbs-up"></i> Like';
+                    }
+                });
+            });
+
+            // Comment toggle functionality
+            const commentButtons = document.querySelectorAll('.comment-btn');
+            commentButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const commentsSection = this.closest('.post').querySelector('.comments-section');
+                    commentsSection.classList.toggle('active');
+                    
+                    if (commentsSection.classList.contains('active')) {
+                        commentsSection.querySelector('input').focus();
+                    }
+                });
+            });
+
+            // Share functionality
+            const shareButtons = document.querySelectorAll('.share-btn');
+            shareButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const postContent = this.closest('.post').querySelector('.post-content').textContent;
+                    const postId = Math.random().toString(36).substring(2, 10);
+                    const shareUrl = `${window.location.origin}${window.location.pathname}#post-${postId}`;
+                    
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        alert('Post link copied to clipboard!');
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+                });
+            });
+
+            // Add comment functionality
+            const commentForms = document.querySelectorAll('.add-comment');
+            commentForms.forEach(form => {
+                const button = form.querySelector('button');
+                const input = form.querySelector('input');
+                
+                button.addEventListener('click', function() {
+                    addComment(input);
+                });
+                
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        addComment(this);
+                    }
+                });
+            });
+
+            // Connect button functionality
+            const connectButtons = document.querySelectorAll('.connect-btn');
+            connectButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.textContent === 'Connect') {
+                        this.textContent = 'Pending';
+                        this.classList.remove('btn-primary');
+                        this.classList.add('btn-outline');
+                    } else if (this.textContent === 'Pending') {
+                        openModal('Are you sure you want to cancel this connection request?', () => {
+                            this.textContent = 'Connect';
+                            this.classList.remove('btn-outline');
+                            this.classList.add('btn-primary');
+                        });
+                    }
+                });
+            });
+
+            // Apply button functionality
+            const applyButtons = document.querySelectorAll('.apply-btn');
+            applyButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.textContent === 'Apply Now') {
+                        this.textContent = 'Applied';
+                        this.classList.remove('btn-primary');
+                        this.classList.add('btn-success');
+                        alert('Your application has been submitted successfully!');
+                    } else if (this.textContent === 'Applied') {
+                        openModal('Are you sure you want to withdraw your application?', () => {
+                            this.textContent = 'Apply Now';
+                            this.classList.remove('btn-success');
+                            this.classList.add('btn-primary');
+                        });
+                    }
+                });
+            });
+
+            // Save button functionality
+            const saveButtons = document.querySelectorAll('.save-btn');
+            saveButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const icon = this.querySelector('i');
+                    if (icon.classList.contains('far')) {
+                        icon.classList.remove('far');
+                        icon.classList.add('fas');
+                        this.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
+                    } else {
+                        icon.classList.remove('fas');
+                        icon.classList.add('far');
+                        this.innerHTML = '<i class="far fa-bookmark"></i> Save';
+                    }
+                });
+            });
+
+            // Enroll button functionality
+            const enrollButtons = document.querySelectorAll('.enroll-btn');
+            enrollButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    if (this.textContent === 'Enroll Now') {
+                        this.textContent = 'Enrolled';
+                        this.classList.remove('btn-primary');
+                        this.classList.add('btn-success');
+                        alert('You have successfully enrolled in this mentorship program!');
+                    } else if (this.textContent === 'Enrolled') {
+                        openModal('Are you sure you want to unenroll from this mentorship program?', () => {
+                            this.textContent = 'Enroll Now';
+                            this.classList.remove('btn-success');
+                            this.classList.add('btn-primary');
+                        });
+                    }
+                });
+            });
+
+            // Search functionality
+            const searchInput = document.querySelector('.search-bar input');
+            if (searchInput) {
+                searchInput.addEventListener('input', function() {
+                    const searchTerm = this.value.toLowerCase();
+                    const posts = document.querySelectorAll('.post');
+                    
+                    posts.forEach(post => {
+                        const content = post.querySelector('.post-content').textContent.toLowerCase();
+                        const author = post.querySelector('.user-info h3').textContent.toLowerCase();
+                        
+                        if (content.includes(searchTerm) || author.includes(searchTerm)) {
+                            post.style.display = 'block';
+                        } else {
+                            post.style.display = 'none';
+                        }
+                    });
+                });
+            }
+        });
+
+        function generateCalendar(month, year) {
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"
+            ];
+            
+            document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
+            
+            const calendarDays = document.getElementById('calendarDays');
+            calendarDays.innerHTML = '';
+            
+            // Add day headers
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            days.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'calendar-day';
+                dayElement.textContent = day;
+                calendarDays.appendChild(dayElement);
+            });
+            
+            // Get first day of month
+            const firstDay = new Date(year, month, 1).getDay();
+            
+            // Get days in month
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            // Add empty cells for days before first day of month
+            for (let i = 0; i < firstDay; i++) {
+                const emptyCell = document.createElement('div');
+                emptyCell.className = 'calendar-date other-month';
+                calendarDays.appendChild(emptyCell);
+            }
+            
+            // Add cells for days in month
+            const today = new Date();
+            for (let i = 1; i <= daysInMonth; i++) {
+                const dateCell = document.createElement('div');
+                dateCell.className = 'calendar-date';
+                dateCell.textContent = i;
+                
+                // Highlight current date
+                if (i === today.getDate() && month === today.getMonth() && year === today.getYear()) {
+                    dateCell.classList.add('current');
+                }
+                
+                // Add event indicator for some dates
+                if ((i === 15 || i === 22 || i === 30) && month === 8) { // September events
+                    dateCell.classList.add('has-event');
+                }
+                if ((i === 5 || i === 18) && month === 9) { // October events
+                    dateCell.classList.add('has-event');
+                }
+                if ((i === 2) && month === 10) { // November events
+                    dateCell.classList.add('has-event');
+                }
+                
+                calendarDays.appendChild(dateCell);
+            }
+        }
+
+        function previewFile(type) {
+            const fileInput = type === 'image' ? document.getElementById('imageUpload') : document.getElementById('videoUpload');
+            const filePreview = document.getElementById('filePreview');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    if (type === 'image') {
+                        filePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    } else {
+                        filePreview.innerHTML = `<video controls><source src="${e.target.result}" type="video/mp4">Your browser does not support the video tag.</video>`;
+                    }
+                    filePreview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        function previewTimelineFile(type) {
+            const fileInput = type === 'image' ? document.getElementById('timelineImageUpload') : document.getElementById('timelineVideoUpload');
+            const filePreview = document.getElementById('timelineFilePreview');
+            
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    if (type === 'image') {
+                        filePreview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
+                    } else {
+                        filePreview.innerHTML = `<video controls><source src="${e.target.result}" type="video/mp4">Your browser does not support the video tag.</video>`;
+                    }
+                    filePreview.style.display = 'block';
+                }
+                
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+        }
+
+        function createNewPost() {
+            const postContent = document.getElementById('postContent').value.trim();
+            const filePreview = document.getElementById('filePreview');
+            
+            if (postContent || filePreview.innerHTML !== '') {
+                const postsContainer = document.querySelector('#dashboard-home .dashboard-home > div:first-child');
+                const newPost = document.createElement('div');
+                newPost.className = 'post';
+                
+                let mediaHTML = '';
+                if (filePreview.innerHTML !== '') {
+                    if (filePreview.querySelector('img')) {
+                        mediaHTML = `<img class="post-image" src="${filePreview.querySelector('img').src}" alt="Post Image">`;
+                    } else if (filePreview.querySelector('video')) {
+                        mediaHTML = `<video class="post-video" controls>${filePreview.querySelector('video').innerHTML}</video>`;
+                    }
+                }
+                
+                newPost.innerHTML = `
+                    <div class="post-header">
+                        <img class="user-avatar" src="https://randomuser.me/api/portraits/men/1.jpg" alt="User Avatar">
+                        <div class="user-info">
+                            <h3>You</h3>
+                            <span>Just now</span>
+                        </div>
+                    </div>
+                    ${mediaHTML}
+                    <div class="post-content">${postContent}</div>
+                    <div class="post-actions">
+                        <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                        <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                        <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                    </div>
+                    <div class="comments-section">
+                        <div class="add-comment">
+                            <input type="text" placeholder="Write a comment...">
+                            <button><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                `;
+                postsContainer.insertBefore(newPost, postsContainer.childNodes[1]);
+                
+                // Add event listeners to the new post
+                const likeBtn = newPost.querySelector('.like-btn');
+                likeBtn.addEventListener('click', function() {
+                    this.classList.toggle('liked');
+                    if (this.classList.contains('liked')) {
+                        this.innerHTML = '<i class="fas fa-thumbs-up"></i> Liked';
+                    } else {
+                        this.innerHTML = '<i class="far fa-thumbs-up"></i> Like';
+                    }
+                });
+                
+                const commentBtn = newPost.querySelector('.comment-btn');
+                commentBtn.addEventListener('click', function() {
+                    const commentsSection = this.closest('.post').querySelector('.comments-section');
+                    commentsSection.classList.toggle('active');
+                    
+                    if (commentsSection.classList.contains('active')) {
+                        commentsSection.querySelector('input').focus();
+                    }
+                });
+                
+                const shareBtn = newPost.querySelector('.share-btn');
+                shareBtn.addEventListener('click', function() {
+                    const postContent = this.closest('.post').querySelector('.post-content').textContent;
+                    const postId = Math.random().toString(36).substring(2, 10);
+                    const shareUrl = `${window.location.origin}${window.location.pathname}#post-${postId}`;
+                    
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        alert('Post link copied to clipboard!');
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+                });
+                
+                const commentForm = newPost.querySelector('.add-comment');
+                const button = commentForm.querySelector('button');
+                const input = commentForm.querySelector('input');
+                
+                button.addEventListener('click', function() {
+                    addComment(input);
+                });
+                
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        addComment(this);
+                    }
+                });
+                
+                // Clear the form
+                document.getElementById('postContent').value = '';
+                filePreview.innerHTML = '';
+                filePreview.style.display = 'none';
+            }
+        }
+
+        function createNewTimelinePost() {
+            const postContent = document.getElementById('timelinePostContent').value.trim();
+            const filePreview = document.getElementById('timelineFilePreview');
+            
+            if (postContent || filePreview.innerHTML !== '') {
+                const postsContainer = document.querySelector('.posts-container');
+                const newPost = document.createElement('div');
+                newPost.className = 'post';
+                
+                let mediaHTML = '';
+                if (filePreview.innerHTML !== '') {
+                    if (filePreview.querySelector('img')) {
+                        mediaHTML = `<img class="post-image" src="${filePreview.querySelector('img').src}" alt="Post Image">`;
+                    } else if (filePreview.querySelector('video')) {
+                        mediaHTML = `<video class="post-video" controls>${filePreview.querySelector('video').innerHTML}</video>`;
+                    }
+                }
+                
+                newPost.innerHTML = `
+                    <div class="post-header">
+                        <img class="user-avatar" src="https://randomuser.me/api/portraits/men/1.jpg" alt="User Avatar">
+                        <div class="user-info">
+                            <h3>You</h3>
+                            <span>Just now</span>
+                        </div>
+                    </div>
+                    ${mediaHTML}
+                    <div class="post-content">${postContent}</div>
+                    <div class="post-actions">
+                        <button class="action-btn like-btn"><i class="far fa-thumbs-up"></i> Like</button>
+                        <button class="action-btn comment-btn"><i class="far fa-comment"></i> Comment</button>
+                        <button class="action-btn share-btn"><i class="far fa-share-square"></i> Share</button>
+                    </div>
+                    <div class="comments-section">
+                        <div class="add-comment">
+                            <input type="text" placeholder="Write a comment...">
+                            <button><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                `;
+                postsContainer.insertBefore(newPost, postsContainer.childNodes[1]);
+                
+                // Add event listeners to the new post
+                const likeBtn = newPost.querySelector('.like-btn');
+                likeBtn.addEventListener('click', function() {
+                    this.classList.toggle('liked');
+                    if (this.classList.contains('liked')) {
+                        this.innerHTML = '<i class="fas fa-thumbs-up"></i> Liked';
+                    } else {
+                        this.innerHTML = '<i class="far fa-thumbs-up"></i> Like';
+                    }
+                });
+                
+                const commentBtn = newPost.querySelector('.comment-btn');
+                commentBtn.addEventListener('click', function() {
+                    const commentsSection = this.closest('.post').querySelector('.comments-section');
+                    commentsSection.classList.toggle('active');
+                    
+                    if (commentsSection.classList.contains('active')) {
+                        commentsSection.querySelector('input').focus();
+                    }
+                });
+                
+                const shareBtn = newPost.querySelector('.share-btn');
+                shareBtn.addEventListener('click', function() {
+                    const postContent = this.closest('.post').querySelector('.post-content').textContent;
+                    const postId = Math.random().toString(36).substring(2, 10);
+                    const shareUrl = `${window.location.origin}${window.location.pathname}#post-${postId}`;
+                    
+                    navigator.clipboard.writeText(shareUrl).then(() => {
+                        alert('Post link copied to clipboard!');
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+                });
+                
+                const commentForm = newPost.querySelector('.add-comment');
+                const button = commentForm.querySelector('button');
+                const input = commentForm.querySelector('input');
+                
+                button.addEventListener('click', function() {
+                    addComment(input);
+                });
+                
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        addComment(this);
+                    }
+                });
+                
+                // Clear the form
+                document.getElementById('timelinePostContent').value = '';
+                filePreview.innerHTML = '';
+                filePreview.style.display = 'none';
+            }
+        }
+
+        function addComment(input) {
+            const commentText = input.value.trim();
+            if (commentText) {
+                const commentsContainer = input.closest('.comments-section');
+                const newComment = document.createElement('div');
+                newComment.className = 'comment';
+                newComment.innerHTML = `
+                    <img class="comment-avatar" src="https://randomuser.me/api/portraits/men/1.jpg" alt="Commenter Avatar">
+                    <div class="comment-content">
+                        <div class="comment-author">You</div>
+                        <div class="comment-text">${commentText}</div>
+                    </div>
+                `;
+                commentsContainer.insertBefore(newComment, input.parentElement);
+                input.value = '';
+            }
+        }
+
+        function acceptConnection(name) {
+            alert(`Connection request from ${name} accepted!`);
+            connections.push(name);
+            // Remove the connection request card
+            const cards = document.querySelectorAll('.connection-card');
+            cards.forEach(card => {
+                if (card.querySelector('.connection-name').textContent === name) {
+                    card.remove();
+                }
+            });
+        }
+
+        function ignoreConnection(name) {
+            alert(`Connection request from ${name} ignored.`);
+            // Remove the connection request card
+            const cards = document.querySelectorAll('.connection-card');
+            cards.forEach(card => {
+                if (card.querySelector('.connection-name').textContent === name) {
+                    card.remove();
+                }
+            });
+        }
+
+        function connectUser(name, button) {
+            if (button.textContent === 'Connect') {
+                button.textContent = 'Pending';
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-outline');
+                alert(`Connection request sent to ${name}`);
+            } else if (button.textContent === 'Pending') {
+                openModal('Are you sure you want to cancel this connection request?', () => {
+                    button.textContent = 'Connect';
+                    button.classList.remove('btn-outline');
+                    button.classList.add('btn-primary');
+                });
+            }
+        }
+
+        function openMessageModal(name, isConnected) {
+            const messageModal = document.getElementById('messageModal');
+            const messageModalTitle = document.getElementById('messageModalTitle');
+            const chatMessages = document.getElementById('chatMessages');
+            
+            currentChatUser = name;
+            isConnectedToChatUser = isConnected;
+            
+            messageModalTitle.textContent = `Message ${name}`;
+            chatMessages.innerHTML = '';
+            
+            if (!isConnected) {
+                chatMessages.innerHTML = `
+                    <div class="message received">
+                        <p>You need to connect with ${name} before you can message them.</p>
+                    </div>
+                `;
+                document.getElementById('messageInput').disabled = true;
+                document.getElementById('sendMessage').disabled = true;
+            } else {
+                document.getElementById('messageInput').disabled = false;
+                document.getElementById('sendMessage').disabled = false;
+                
+                // Load chat history
+                if (chatMessages[name] && chatMessages[name].length > 0) {
+                    chatMessages[name].forEach(msg => {
+                        const messageDiv = document.createElement('div');
+                        messageDiv.className = `message ${msg.sender === 'You' ? 'sent' : 'received'}`;
+                        messageDiv.innerHTML = `
+                            <p>${msg.text}</p>
+                            <small>${msg.time}</small>
+                        `;
+                        chatMessages.appendChild(messageDiv);
+                    });
+                } else {
+                    chatMessages.innerHTML = `
+                        <div class="message received">
+                            <p>No messages yet. Start a conversation with ${name}!</p>
+                        </div>
+                    `;
+                }
+                
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            messageModal.style.display = 'flex';
+        }
+
+        function sendMessage() {
+            if (!isConnectedToChatUser) return;
+            
+            const messageInput = document.getElementById('messageInput');
+            const messageText = messageInput.value.trim();
+            
+            if (messageText) {
+                const chatMessages = document.getElementById('chatMessages');
+                
+                // Add new message to UI
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message sent';
+                messageDiv.innerHTML = `
+                    <p>${messageText}</p>
+                    <small>Just now</small>
+                `;
+                chatMessages.appendChild(messageDiv);
+                
+                // Add to chat history
+                if (!chatMessages[currentChatUser]) {
+                    chatMessages[currentChatUser] = [];
+                }
+                
+                chatMessages[currentChatUser].push({
+                    sender: 'You',
+                    text: messageText,
+                    time: 'Just now'
+                });
+                
+                // Clear input and scroll to bottom
+                messageInput.value = '';
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Simulate reply after a delay
+                setTimeout(() => {
+                    const replies = [
+                        "Thanks for your message!",
+                        "That's interesting!",
+                        "I'll get back to you soon.",
+                        "Can we schedule a call to discuss this further?",
+                        "Great to hear from you!"
+                    ];
+                    
+                    const reply = replies[Math.floor(Math.random() * replies.length)];
+                    
+                    const replyDiv = document.createElement('div');
+                    replyDiv.className = 'message received';
+                    replyDiv.innerHTML = `
+                        <p>${reply}</p>
+                        <small>Just now</small>
+                    `;
+                    chatMessages.appendChild(replyDiv);
+                    
+                    chatMessages[currentChatUser].push({
+                        sender: currentChatUser,
+                        text: reply,
+                        time: 'Just now'
+                    });
+                    
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 1000 + Math.random() * 2000);
+            }
+        }
+
+        function saveOpportunity(title, button) {
+            const icon = button.querySelector('i');
+            if (icon.classList.contains('far')) {
+                icon.classList.remove('far');
+                icon.classList.add('fas');
+                button.innerHTML = '<i class="fas fa-bookmark"></i> Saved';
+                savedOpportunities.push(title);
+                updateSavedOpportunities();
+                alert(`"${title}" has been saved to your opportunities!`);
+            } else {
+                icon.classList.remove('fas');
+                icon.classList.add('far');
+                button.innerHTML = '<i class="far fa-bookmark"></i> Save';
+                savedOpportunities = savedOpportunities.filter(opp => opp !== title);
+                updateSavedOpportunities();
+                alert(`"${title}" has been removed from your saved opportunities!`);
+            }
+        }
+
+        function updateSavedOpportunities() {
+            const savedContainer = document.getElementById('savedOpportunities');
+            
+            if (savedOpportunities.length === 0) {
+                savedContainer.innerHTML = '<p>You haven\'t saved any opportunities yet.</p>';
+                return;
+            }
+            
+            savedContainer.innerHTML = '<ul style="list-style-type: none; padding: 0;">';
+            savedOpportunities.forEach(opp => {
+                savedContainer.innerHTML += `<li style="padding: 8px 0; border-bottom: 1px solid #eee;">${opp}</li>`;
+            });
+            savedContainer.innerHTML += '</ul>';
+        }
+
+        function applyOpportunity(title, button) {
+            if (button.textContent === 'Apply Now') {
+                button.textContent = 'Applied';
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-success');
+                alert(`Your application for "${title}" has been submitted successfully!`);
+            } else if (button.textContent === 'Applied') {
+                openModal('Are you sure you want to withdraw your application?', () => {
+                    button.textContent = 'Apply Now';
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-primary');
+                });
+            }
+        }
+
+        function viewOpportunityDetails(title) {
+            alert(`Viewing details for: ${title}\n\nThis would show a full description, requirements, benefits, and application process for the position.`);
+        }
+
+        function showEventDetails(title, description) {
+            const eventModal = document.getElementById('eventModal');
+            const eventModalTitle = document.getElementById('eventModalTitle');
+            const eventModalBody = document.getElementById('eventModalBody');
+            const eventModalRSVP = document.getElementById('eventModalRSVP');
+            
+            eventModalTitle.textContent = title;
+            eventModalBody.innerHTML = `
+                <p>${description}</p>
+                <h4>Event Details:</h4>
+                <ul>
+                    <li><strong>Date:</strong> September 30, 2023</li>
+                    <li><strong>Time:</strong> 6:00 PM - 9:00 PM</li>
+                    <li><strong>Location:</strong> Campus Auditorium</li>
+                    <li><strong>Organizer:</strong> SITER Alumni Association</li>
+                </ul>
+            `;
+            
+            eventModalRSVP.textContent = 'RSVP';
+            eventModalRSVP.onclick = function() {
+                rsvpEvent(title);
+            };
+            
+            eventModal.style.display = 'flex';
+        }
+
+        function rsvpEvent(title) {
+            alert(`You have successfully RSVP'd for: ${title}`);
+            document.getElementById('eventModalRSVP').textContent = 'RSVP Confirmed';
+            document.getElementById('eventModalRSVP').classList.remove('btn-primary');
+            document.getElementById('eventModalRSVP').classList.add('btn-success');
+            document.getElementById('eventModalRSVP').disabled = true;
+        }
+
+        function addToCalendar(title) {
+            alert(`"${title}" has been added to your calendar!`);
+        }
+
+        function shareEvent(title) {
+            const shareUrl = `${window.location.origin}${window.location.pathname}#event-${title.replace(/\s+/g, '-').toLowerCase()}`;
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                alert(`Event link for "${title}" copied to clipboard!`);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+            });
+        }
+
+        function showNewsDetails(title, content) {
+            const newsModal = document.getElementById('newsModal');
+            const newsModalTitle = document.getElementById('newsModalTitle');
+            const newsModalBody = document.getElementById('newsModalBody');
+            
+            newsModalTitle.textContent = title;
+            newsModalBody.innerHTML = `
+                <p>${content}</p>
+                <p><em>Published: ${new Date().toLocaleDateString()}</em></p>
+            `;
+            
+            newsModal.style.display = 'flex';
+        }
+
+        function enrollMentorship(title, button) {
+            if (button.textContent === 'Enroll Now') {
+                button.textContent = 'Enrolled';
+                button.classList.remove('btn-primary');
+                button.classList.add('btn-success');
+                enrolledMentorships.push(title);
+                alert(`You have successfully enrolled in the ${title} mentorship program!`);
+            } else if (button.textContent === 'Enrolled') {
+                openModal('Are you sure you want to unenroll from this mentorship program?', () => {
+                    button.textContent = 'Enroll Now';
+                    button.classList.remove('btn-success');
+                    button.classList.add('btn-primary');
+                    enrolledMentorships = enrolledMentorships.filter(program => program !== title);
+                });
+            }
+        }
+
+        function editProfile() {
+            const profileModal = document.getElementById('profileModal');
+            const profileName = document.getElementById('profileName');
+            const profileTitle = document.getElementById('profileTitle');
+            const profileAbout = document.getElementById('profileAbout');
+            
+            // Pre-fill form with current values
+            profileName.value = document.querySelector('.profile-name').textContent;
+            profileTitle.value = document.querySelector('.profile-title').textContent;
+            profileAbout.value = document.querySelector('.profile-about p').textContent;
+            
+            profileModal.style.display = 'flex';
+        }
+
+        function changeProfilePicture() {
+            alert('Profile picture change functionality would open a file dialog to select a new image.');
+        }
+        
+    </script>
+</body>
+</html>
